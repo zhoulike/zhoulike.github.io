@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Others | Like World]]></title>
+  <link href="http://zhoulike.github.io/blog/categories/others/atom.xml" rel="self"/>
+  <link href="http://zhoulike.github.io/"/>
+  <updated>2013-12-10T12:57:27+08:00</updated>
+  <id>http://zhoulike.github.io/</id>
+  <author>
+    <name><![CDATA[Like]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://zhoulike.github.io/blog/2013/12/10/hello-world/"/>
+    <updated>2013-12-10T12:52:39+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2013/12/10/hello-world</id>
+    <content type="html"><![CDATA[<p>```cpp</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<p>int main()
+{</p>
+
+<pre><code>printf("Hello World!\n");
+return 0;
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
+  
+</feed>
