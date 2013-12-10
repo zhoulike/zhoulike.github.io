@@ -3,7 +3,7 @@
 # ----------------------- #
 
 url: http://zhoulike.github.io
-title: Like world
+title: Like World
 subtitle: Like's blog
 author: Like
 simple_search: http://google.com/search
@@ -63,10 +63,10 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 # Github repositories
-github_user: zhoulike
-github_repo_count: 7
-github_show_profile_link: true
-github_skip_forks: true
+#github_user: zhoulike
+#github_repo_count: 7
+#github_show_profile_link: true
+#github_skip_forks: true
 
 # Twitter
 #twitter_user:
