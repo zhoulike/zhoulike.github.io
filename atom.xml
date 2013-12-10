@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Like world]]></title>
+  <link href="http://zhoulike.github.io/atom.xml" rel="self"/>
+  <link href="http://zhoulike.github.io/"/>
+  <updated>2013-12-10T11:43:22+08:00</updated>
+  <id>http://zhoulike.github.io/</id>
+  <author>
+    <name><![CDATA[Like]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+</feed>
