@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Key-Value | Like World]]></title>
+  <link href="http://zhoulike.github.io/blog/categories/key-value/atom.xml" rel="self"/>
+  <link href="http://zhoulike.github.io/"/>
+  <updated>2014-02-15T15:24:24+08:00</updated>
+  <id>http://zhoulike.github.io/</id>
+  <author>
+    <name><![CDATA[Like]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[LevelDB安装及试玩]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/01/20/leveldban-zhuang-ji-shi-wan/"/>
+    <updated>2014-01-20T21:05:40+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/01/20/leveldban-zhuang-ji-shi-wan</id>
+    <content type="html"><![CDATA[<p>LevelDB的核心代码很短，1W行不到的样子。注释详细，可以用来学习C++在实际工程项目上的用法。</p>
+
+<h3>安装LevelDB</h3>
+
+<p>安装很简单，环境为Ubuntu 12.04</p>
+
+<p><code>sh
+git clone https://code.google.com/p/leveldb/
+cd leveldb
+make
+sudo cp -r include/leveldb /usr/local/include/
+sudo cp -r libleveldb.so* /usr/local/lib/
+sudo ldconfig
+</code></p>
+
+<h3>简单试用</h3>
+
+<p>```cpp</p>
+
+<h1>include &ldquo;leveldb/db.h&rdquo;</h1>
+
+<h1>include <iostream></h1>
+
+<p>using namespace std;</p>
+
+<p>int main()
+{</p>
+
+<pre><code>leveldb::DB *db;
+leveldb::Options option;
+
+option.create_if_missing = true;
+leveldb::DB::Open(option, "/tmp/leveldb_t", &amp;db);
+
+string key = "Name";
+string value = "Like";
+db-&gt;Put(leveldb::WriteOptions(), key, value);
+
+key = "Major";
+value = "Computer Science and Technology";
+db-&gt;Put(leveldb::WriteOptions(), key, value);
+
+
+string ret_s;
+db-&gt;Get(leveldb::ReadOptions(), "Name", &amp;ret_s);
+cout &lt;&lt; "key = Name" &lt;&lt; endl
+     &lt;&lt; "value = " &lt;&lt; ret_s &lt;&lt; endl;
+
+db-&gt;Get(leveldb::ReadOptions(), "Major", &amp;ret_s);
+cout &lt;&lt; "key = Major" &lt;&lt; endl
+     &lt;&lt; "value = " &lt;&lt; ret_s &lt;&lt; endl;
+
+delete db;
+return 0;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>编译运行也很简单：</p>
+
+<p><code>sh
+g++ test.cpp -lleveldb
+./a.out
+</code></p>
+
+<h4>References：</h4>
+
+<p>[1] <a href="http://www.puritys.me/docs-blog/article-112">Google LevelDB 試玩心得</a></p>
+]]></content>
+  </entry>
+  
+</feed>

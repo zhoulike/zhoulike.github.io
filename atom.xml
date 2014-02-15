@@ -4,7 +4,7 @@
   <title><![CDATA[Like World]]></title>
   <link href="http://zhoulike.github.io/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2013-12-11T16:40:08+08:00</updated>
+  <updated>2014-02-15T15:24:24+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -12,6 +12,221 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[LevelDB安装及试玩]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/01/20/leveldban-zhuang-ji-shi-wan/"/>
+    <updated>2014-01-20T21:05:40+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/01/20/leveldban-zhuang-ji-shi-wan</id>
+    <content type="html"><![CDATA[<p>LevelDB的核心代码很短，1W行不到的样子。注释详细，可以用来学习C++在实际工程项目上的用法。</p>
+
+<h3>安装LevelDB</h3>
+
+<p>安装很简单，环境为Ubuntu 12.04</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git clone https://code.google.com/p/leveldb/
+</span><span class='line'><span class="nb">cd </span>leveldb
+</span><span class='line'>make
+</span><span class='line'>sudo cp -r include/leveldb /usr/local/include/
+</span><span class='line'>sudo cp -r libleveldb.so* /usr/local/lib/
+</span><span class='line'>sudo ldconfig
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>简单试用</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &quot;leveldb/db.h&quot;</span>
+</span><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">leveldb</span><span class="o">::</span><span class="n">DB</span> <span class="o">*</span><span class="n">db</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">leveldb</span><span class="o">::</span><span class="n">Options</span> <span class="n">option</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">option</span><span class="p">.</span><span class="n">create_if_missing</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">leveldb</span><span class="o">::</span><span class="n">DB</span><span class="o">::</span><span class="n">Open</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="s">&quot;/tmp/leveldb_t&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">db</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">string</span> <span class="n">key</span> <span class="o">=</span> <span class="s">&quot;Name&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">string</span> <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;Like&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">db</span><span class="o">-&gt;</span><span class="n">Put</span><span class="p">(</span><span class="n">leveldb</span><span class="o">::</span><span class="n">WriteOptions</span><span class="p">(),</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">key</span> <span class="o">=</span> <span class="s">&quot;Major&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;Computer Science and Technology&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">db</span><span class="o">-&gt;</span><span class="n">Put</span><span class="p">(</span><span class="n">leveldb</span><span class="o">::</span><span class="n">WriteOptions</span><span class="p">(),</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">string</span> <span class="n">ret_s</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">db</span><span class="o">-&gt;</span><span class="n">Get</span><span class="p">(</span><span class="n">leveldb</span><span class="o">::</span><span class="n">ReadOptions</span><span class="p">(),</span> <span class="s">&quot;Name&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ret_s</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;key = Name&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+</span><span class='line'>       <span class="o">&lt;&lt;</span> <span class="s">&quot;value = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">ret_s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">db</span><span class="o">-&gt;</span><span class="n">Get</span><span class="p">(</span><span class="n">leveldb</span><span class="o">::</span><span class="n">ReadOptions</span><span class="p">(),</span> <span class="s">&quot;Major&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ret_s</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;key = Major&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span>
+</span><span class='line'>       <span class="o">&lt;&lt;</span> <span class="s">&quot;value = &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">ret_s</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">delete</span> <span class="n">db</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译运行也很简单：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>g++ test.cpp -lleveldb
+</span><span class='line'>./a.out
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>References：</h4>
+
+<p>[1] <a href="http://www.puritys.me/docs-blog/article-112">Google LevelDB 試玩心得</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Python画CDF图]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/01/08/shi-yong-pythonhua-cdftu/"/>
+    <updated>2014-01-08T19:43:06+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/01/08/shi-yong-pythonhua-cdftu</id>
+    <content type="html"><![CDATA[<h3>依赖包：numpy, matplotlib, statsmodels</h3>
+
+<ul>
+<li>可以使用sudo apt-get install python-numpy python-matplotlib安装前两个</li>
+<li>ubuntu 12.04里没新版的statsmodels，使用pip安装。它依赖于pandas和patsy，都可以通过pip安装</li>
+</ul>
+
+
+<h3>实现代码借鉴于参考文献[1]</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="c"># encoding: utf-8</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">cdf_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    data: 一组数据</span>
+</span><span class='line'><span class="sd">    name: 在legend上显示的名称</span>
+</span><span class='line'><span class="sd">    number: 数据最大最小值之间划分多少段</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">ecdf</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">ECDF</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">number</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">y</span> <span class="o">=</span> <span class="n">ecdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#plt.step(x, y, label=name)</span>
+</span><span class='line'>    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+</span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">cdf_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#plt.xscale(&#39;log&#39;)</span>
+</span><span class='line'>    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c">#显示CDF图</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将代码保存为cdf.py，即可运行。后面跟几个文件，每个文件全是数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./cdf.py data1 data2 data3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>References</h3>
+
+<p>[1] <a href="http://stackoverflow.com/questions/3209362/how-to-plot-empirical-cdf-in-matplotlib-in-python">How to plot empirical cdf in matplotlib in Python?</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hello World]]></title>
