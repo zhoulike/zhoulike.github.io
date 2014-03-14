@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Algorithms | Like World]]></title>
+  <link href="http://zhoulike.github.io/blog/categories/algorithms/atom.xml" rel="self"/>
+  <link href="http://zhoulike.github.io/"/>
+  <updated>2014-03-14T21:49:52+08:00</updated>
+  <id>http://zhoulike.github.io/</id>
+  <author>
+    <name><![CDATA[Like]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Cc150总结-1. Arrays and Strings]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/03/14/cc150-1/"/>
+    <updated>2014-03-14T20:58:33+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/03/14/cc150-1</id>
+    <content type="html"><![CDATA[<p>重点推荐1.8</p>
+
+<h3>1.1 查看字符串中的字符是否唯一的，如果不使用额外的数据结构怎么做？</h3>
+
+<p>A： 核心思路是记录每个字符出现的次数，如果某个字符出现第二次，就返回false。否则返回true。有下面3种解法，代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.1.cpp">在此</a>:</p>
+
+<blockquote><ul>
+<li>最简单的方法是使用Hash表。</li>
+<li>因为字符最多只有256个，可以用一个包含256个元素的bool数组。</li>
+<li>使用位图，只需要256位，也就是大小为32的char数组。</li>
+</ul>
+</blockquote>
+
+<h3>1.2 实现void reverse(char *str)</h3>
+
+<p>A: 使用前后指针同时操作。但这个函数必须保证str是字符数组，而不能是字符串常量。比如reverse(&ldquo;haha&rdquo;)就会报段错误。正确的函数应该是返回一个指向reversed字符串的指针。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.2.cpp">在此</a></p>
+
+<h3>1.3 给定两个字符串，判定一个字符串是否是另一个字符串的排列</h3>
+
+<p>A：借用1.1的思路，使用包含256个元素的数组，统计两个字符串上的元素是否都一样。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.3.cpp">在此</a></p>
+
+<h3>1.4 写一个函数将所有的空格替换成%20</h3>
+
+<p>A：先统计有多少个空格，从字符串尾部开始将字符移动到正确位置，当遇到空格时，就使用%20替换。简单的题目要写出bug free的代码。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.4.cpp">在此</a></p>
+
+<h3>1.5 压缩字符串，如果压缩后的长度不比原来的字符串短，就返回原来的字符串。比如aabcccccaaa &ndash;> a2b1c5a3</h3>
+
+<p>A：基本思路就是查看邻近的字符，相同就增加计数，不同就添加到压缩串里。（这里要注意边界条件，比如最后一组等）代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.5.cpp">在此</a></p>
+
+<h3>1.6 将N×N的矩阵顺时针旋转90度，最好在原地进行。</h3>
+
+<p>A：这道题的主要思路就是找到旋转时，4个点的关系。旋转是一层一层来，从最外层到最里层。可以通过实例来推导关系，比如一个4×4的矩阵：</p>
+
+<blockquote><ul>
+<li>(0, 0) &ndash;> (0, 3) &ndash;> (3, 3) &ndash;> (3, 0) &ndash;> (0, 0)</li>
+<li>(0, 1) &ndash;> (1, 3) &ndash;> (3, 2) &ndash;> (2, 0) &ndash;> (0, 1)</li>
+<li>(0, 2) &ndash;> (2, 3) &ndash;> (3, 1) &ndash;> (1, 0) &ndash;> (0, 2)</li>
+<li>(1, 1) &ndash;> (1, 2) &ndash;> (2, 2) &ndash;> (2, 1) &ndash;> (1, 1)</li>
+</ul>
+</blockquote>
+
+<p>总结关系如下：</p>
+
+<blockquote><ul>
+<li>i = （0, 1, &hellip;), j = (n &ndash; 1, n -2 , &hellip;), i &lt; j。i最多只到一半的行，因为后半行已经旋转过了。j代表外面的层</li>
+<li>k = (i, i + 1, &hellip;, j &ndash; 1)。k是每一行的元素。</li>
+<li>l = n &ndash; k &ndash; 1。即l + k = n &ndash; 1。</li>
+</ul>
+</blockquote>
+
+<p>通用关系如下(i, k) &ndash;> (k, j) &ndash;> (j, l) &ndash;> (l, i) &ndash;> (i, k)。有这个关系，代码就很简单了，<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.6.cpp">在此</a></p>
+
+<h3>1.7 如果M×N矩阵中，有一个元素为0,那么就将该行该列都清0</h3>
+
+<p>A：书中的解法需要O（n）的空间，实际上解法可以优化到O（1）空间，即使用第0行和第0列来记录某一行某一列中是否有0.但是需要注意的是需要单独统计第0行或第0列中最开始时是否有0,这样需要清空第0行或第0列。如果不加以区别，会有额外的元素被清零。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.7.cpp">在此</a></p>
+
+<h3><em>1.8 给定两个字符串s1和s2,判断s2是否可以通过s1旋转而来（只使用一次isSubstring)。比如waterbottle是由erbottlewat旋转过来的。（重点推荐)</em></h3>
+
+<p>A: 这道题没想出只调用一次isSubstring的方法。。不过看了答案后，又学到一招。</p>
+
+<p>常规方法是依次遍历s1，然后判断前后两部分是否都是s2的子串。但这需要调用太多次isSubstring了。</p>
+
+<p>书上精妙的解法：
+假设 s1 = xy, 如果s2由s1旋转而来，s2 = yx
+那么两个s1拼接起来就是： s1s1 = xyxy，从这里可以看出s2是s1s1的子串。太妙了！！！代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/1.8.cpp">在此</a></p>
+]]></content>
+  </entry>
+  
+</feed>
