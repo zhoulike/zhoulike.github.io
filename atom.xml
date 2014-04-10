@@ -4,7 +4,7 @@
   <title><![CDATA[Like World]]></title>
   <link href="http://zhoulike.github.io/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2014-03-14T21:49:52+08:00</updated>
+  <updated>2014-04-10T14:22:25+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -12,6 +12,183 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[求平方根算法]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/04/10/sqrt/"/>
+    <updated>2014-04-10T13:01:28+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/04/10/sqrt</id>
+    <content type="html"><![CDATA[<h3>1. 牛顿法</h3>
+
+<p>先猜一个初值，然后依次迭代，直到结果足够精确。比如求number的平方根：</p>
+
+<blockquote><ul>
+<li>X0 = guess</li>
+<li>X1 = (X0 + number / X0) / 2</li>
+<li>X2 = (X1 + number / X1) / 2</li>
+<li>&hellip;&hellip;</li>
+<li>Xn = (Xn-1 + number / Xn-1) / 2</li>
+</ul>
+</blockquote>
+
+<p>结束条件可以是 abs(Xn * Xn &ndash; number) 小于某个数，或者两次迭代结果 abs(Xn &ndash; Xn-1) 小于某个数.</p>
+
+<p>代码如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;cmath&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;limits&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">double</span> <span class="n">sqrt_newton</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">double</span> <span class="n">val</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">prev</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">do</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">prev</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="n">prev</span> <span class="o">+</span> <span class="n">x</span> <span class="o">/</span> <span class="n">prev</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">prev</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">epsilon</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：上面这个代码不能使用第一个条件判断。因为此时求sqrt_newton(3)时，abs(val * val &ndash; x)最后一直是4.44089e-16，而numeric_limits<double>::epsilon()是2.22045e-16。这样就导致了死循环。这应该是由于浮点数的精度问题导致的。
+如果要使用第一个条件，可以用 abs(val * val &ndash; x) > 0.00000001。</p>
+
+<h3>2. 二分法</h3>
+
+<p>二分法就是每次取中间的值，然后比较。直到结果足够精确。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">double</span> <span class="n">sqrt_bi</span><span class="p">(</span><span class="kt">double</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="kt">double</span> <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">double</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">low</span> <span class="o">+</span> <span class="n">high</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prev</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">do</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">mid</span> <span class="o">*</span> <span class="n">mid</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">high</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="n">low</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">prev</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">mid</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="p">(</span><span class="n">high</span> <span class="o">-</span> <span class="n">low</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">mid</span> <span class="o">-</span> <span class="n">prev</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">epsilon</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">mid</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>3. 不知所云法</h3>
+
+<p>QUAKE-III里用来计算1/sqrt(x)的算法，速度快。
+这里的float不能改成double，改成double就不对了。</p>
+
+<p>还有个问题是，下面这个算法求出的结果精度会有点问题。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">float</span> <span class="n">sqrt_magic</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">float</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">float</span> <span class="n">threehalfs</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">x2</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">i</span> <span class="o">=</span> <span class="o">*</span> <span class="p">(</span><span class="kt">long</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">i</span> <span class="o">=</span> <span class="mh">0x5f3759df</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">y</span> <span class="o">=</span> <span class="o">*</span> <span class="p">(</span><span class="kt">float</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span><span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">threehalfs</span> <span class="o">-</span> <span class="p">(</span><span class="n">x2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">y</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>补充知识：C++中的numeric_limits</h3>
+
+<p>numeric_limits定义于limits头文件中，主要用于取代C语言中limits.h中的那些宏。具体见<a href="http://en.cppreference.com/w/cpp/types/numeric_limits">它的参考页面</a></p>
+
+<p>比如，</p>
+
+<blockquote><ul>
+<li><p>INT_MAX和INT_MIN使用numeric_limits&lt;int>::max()和numeric_limits&lt;int>::min()代替。</p></li>
+<li><p>DBL_EPSILON使用numeric_limits&lt;double>::epsilon()代替</p></li>
+</ul>
+</blockquote>
+
+<h4>References：</h4>
+
+<p>[1] <a href="http://www.cnblogs.com/pkuoliver/archive/2010/10/06/1844725.html">一个Sqrt函数引发的血案</a></p>
+
+<p>[2] <a href="http://zh.wikipedia.org/wiki/%E7%89%9B%E9%A1%BF%E6%B3%95">维基百科-牛顿法</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Cc150总结-1. Arrays and Strings]]></title>
