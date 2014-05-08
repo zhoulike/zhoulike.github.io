@@ -4,7 +4,7 @@
   <title><![CDATA[Like World]]></title>
   <link href="http://zhoulike.github.io/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2014-04-10T14:22:25+08:00</updated>
+  <updated>2014-05-08T17:06:28+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -12,6 +12,135 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[LevelDB——Arena分析]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/05/08/leveldb-arena/"/>
+    <updated>2014-05-08T16:58:16+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/05/08/leveldb-arena</id>
+    <content type="html"><![CDATA[<p>Arena可以单次申请内存，但不能单次释放内存。只有当Arena析构时，才会释放所有申请的内存。另外，Arena允许浪费内存，所以整个Arena的实现就很简洁。</p>
+
+<figure class='code'><figcaption><span>分配bytes大小的空间</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kr">inline</span> <span class="kt">char</span><span class="o">*</span> <span class="n">Arena</span><span class="o">::</span><span class="n">Allocate</span><span class="p">(</span><span class="n">size_t</span> <span class="n">bytes</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">assert</span><span class="p">(</span><span class="n">bytes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">bytes</span> <span class="o">&lt;=</span> <span class="n">alloc_bytes_remaining_</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">//如果有足够的剩余内存，就直接分配</span>
+</span><span class='line'>    <span class="kt">char</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">alloc_ptr_</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">alloc_ptr_</span> <span class="o">+=</span> <span class="n">bytes</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">alloc_bytes_remaining_</span> <span class="o">-=</span> <span class="n">bytes</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">AllocateFallback</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>  <span class="c1">//否则就从新分配的一块内存里分配</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>分配bytes大小的空间，返回的地址是内存对齐的</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">char</span><span class="o">*</span> <span class="n">Arena</span><span class="o">::</span><span class="n">AllocateAligned</span><span class="p">(</span><span class="n">size_t</span> <span class="n">bytes</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">const</span> <span class="kt">int</span> <span class="n">align</span> <span class="o">=</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">?</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span> <span class="o">:</span> <span class="mi">8</span><span class="p">;</span> <span class="c1">//最小8字节对齐</span>
+</span><span class='line'>  <span class="n">assert</span><span class="p">((</span><span class="n">align</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">align</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>   <span class="c1">// Pointer size should be a power of 2</span>
+</span><span class='line'>  <span class="n">size_t</span> <span class="n">current_mod</span> <span class="o">=</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">alloc_ptr_</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">align</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span> <span class="c1">//当前指针超出对齐边界的字节数</span>
+</span><span class='line'>  <span class="n">size_t</span> <span class="n">slop</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_mod</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="n">align</span> <span class="o">-</span> <span class="n">current_mod</span><span class="p">);</span> <span class="c1">//需要调整的字节数</span>
+</span><span class='line'>  <span class="n">size_t</span> <span class="n">needed</span> <span class="o">=</span> <span class="n">bytes</span> <span class="o">+</span> <span class="n">slop</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">needed</span> <span class="o">&lt;=</span> <span class="n">alloc_bytes_remaining_</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//有足够的剩余内存，就直接分配</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">alloc_ptr_</span> <span class="o">+</span> <span class="n">slop</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">alloc_ptr_</span> <span class="o">+=</span> <span class="n">needed</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">alloc_bytes_remaining_</span> <span class="o">-=</span> <span class="n">needed</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// AllocateFallback always returned aligned memory</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="n">AllocateFallback</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>  <span class="c1">//否则就从新分配的一块内存里分配</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">assert</span><span class="p">((</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">align</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>根据情况申请大块内存</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">kBlockSize</span> <span class="o">=</span> <span class="mi">4096</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">char</span><span class="o">*</span> <span class="n">Arena</span><span class="o">::</span><span class="n">AllocateFallback</span><span class="p">(</span><span class="n">size_t</span> <span class="n">bytes</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">bytes</span> <span class="o">&gt;</span> <span class="n">kBlockSize</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">//申请大内存，就直接申请一块</span>
+</span><span class='line'>    <span class="kt">char</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">AllocateNewBlock</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">//前面剩余的内存就浪费掉了</span>
+</span><span class='line'>  <span class="n">alloc_ptr_</span> <span class="o">=</span> <span class="n">AllocateNewBlock</span><span class="p">(</span><span class="n">kBlockSize</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">alloc_bytes_remaining_</span> <span class="o">=</span> <span class="n">kBlockSize</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">char</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">alloc_ptr_</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">alloc_ptr_</span> <span class="o">+=</span> <span class="n">bytes</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">alloc_bytes_remaining_</span> <span class="o">-=</span> <span class="n">bytes</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>一次性分配block_bytes大小的空间</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">char</span><span class="o">*</span> <span class="n">Arena</span><span class="o">::</span><span class="n">AllocateNewBlock</span><span class="p">(</span><span class="n">size_t</span> <span class="n">block_bytes</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">block_bytes</span><span class="p">];</span>
+</span><span class='line'>  <span class="n">blocks_memory_</span> <span class="o">+=</span> <span class="n">block_bytes</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">blocks_</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[求平方根算法]]></title>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Key-Value | Like World]]></title>
   <link href="http://zhoulike.github.io/blog/categories/key-value/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2014-04-10T14:22:25+08:00</updated>
+  <updated>2014-05-08T17:06:28+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -12,6 +12,90 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[LevelDB——Arena分析]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/05/08/leveldb-arena/"/>
+    <updated>2014-05-08T16:58:16+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/05/08/leveldb-arena</id>
+    <content type="html"><![CDATA[<p>Arena可以单次申请内存，但不能单次释放内存。只有当Arena析构时，才会释放所有申请的内存。另外，Arena允许浪费内存，所以整个Arena的实现就很简洁。</p>
+
+<p>```cpp  分配bytes大小的空间
+inline char* Arena::Allocate(size_t bytes) {
+  assert(bytes > 0);
+  if (bytes &lt;= alloc_bytes_remaining_) {  //如果有足够的剩余内存，就直接分配</p>
+
+<pre><code>char* result = alloc_ptr_;
+alloc_ptr_ += bytes;
+alloc_bytes_remaining_ -= bytes;
+return result;
+</code></pre>
+
+<p>  }
+  return AllocateFallback(bytes);  //否则就从新分配的一块内存里分配
+}
+```</p>
+
+<p>```cpp  分配bytes大小的空间，返回的地址是内存对齐的
+char<em> Arena::AllocateAligned(size_t bytes) {
+  const int align = (sizeof(void</em>) > 8) ? sizeof(void<em>) : 8; //最小8字节对齐
+  assert((align &amp; (align-1)) == 0);   // Pointer size should be a power of 2
+  size_t current_mod = reinterpret_cast&lt;uintptr_t>(alloc_ptr_) &amp; (align-1); //当前指针超出对齐边界的字节数
+  size_t slop = (current_mod == 0 ? 0 : align &ndash; current_mod); //需要调整的字节数
+  size_t needed = bytes + slop;
+  char</em> result;
+  if (needed &lt;= alloc_bytes_remaining_) { //有足够的剩余内存，就直接分配</p>
+
+<pre><code>result = alloc_ptr_ + slop;
+alloc_ptr_ += needed;
+alloc_bytes_remaining_ -= needed;
+</code></pre>
+
+<p>  } else {</p>
+
+<pre><code>// AllocateFallback always returned aligned memory
+result = AllocateFallback(bytes);  //否则就从新分配的一块内存里分配
+</code></pre>
+
+<p>  }
+  assert((reinterpret_cast&lt;uintptr_t>(result) &amp; (align-1)) == 0);
+  return result;
+}
+```</p>
+
+<p>```cpp 根据情况申请大块内存
+static const int kBlockSize = 4096;</p>
+
+<p>char* Arena::AllocateFallback(size_t bytes) {
+  if (bytes > kBlockSize / 4) {  //申请大内存，就直接申请一块</p>
+
+<pre><code>char* result = AllocateNewBlock(bytes);
+return result;
+</code></pre>
+
+<p>  }</p>
+
+<p>  //前面剩余的内存就浪费掉了
+  alloc_ptr<em> = AllocateNewBlock(kBlockSize);
+  alloc_bytes_remaining</em> = kBlockSize;</p>
+
+<p>  char* result = alloc_ptr<em>;
+  alloc_ptr</em> += bytes;
+  alloc_bytes_remaining_ &ndash;= bytes;
+  return result;
+}
+```</p>
+
+<p><code>cpp  一次性分配block_bytes大小的空间
+char* Arena::AllocateNewBlock(size_t block_bytes) {
+  char* result = new char[block_bytes];
+  blocks_memory_ += block_bytes;
+  blocks_.push_back(result);
+  return result;
+}
+</code></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[LevelDB安装及试玩]]></title>
