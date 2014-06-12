@@ -4,7 +4,7 @@
   <title><![CDATA[Like World]]></title>
   <link href="http://zhoulike.github.io/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2014-05-08T17:06:28+08:00</updated>
+  <updated>2014-06-12T16:26:32+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Cc150总结-4. Trees and Graphs]]></title>
+    <link href="http://zhoulike.github.io/blog/2014/06/11/cc150-4/"/>
+    <updated>2014-06-11T21:01:50+08:00</updated>
+    <id>http://zhoulike.github.io/blog/2014/06/11/cc150-4</id>
+    <content type="html"><![CDATA[<h1>基本纲领</h1>
+
+<p>树形结构的特征很明显：子树也是树（废话）&hellip;所以，首先要想到的解法就是递归。然后具体方法又分为自顶向下（Top-down）和自底向上（Bottom-up）。</p>
+
+<p>图的算法就那么多吧&hellip;这章就一个图的题。</p>
+
+<h3>4.1 实现一个函数判断一个二叉树是不是平衡的。</h3>
+
+<ul>
+<li>解法1：一个函数求树的高度，然后判断当前树是否平衡。如果平衡就判断子树是否平衡（Top-down）。这个解法的缺点是重复访问底层的节点。</li>
+<li>解法2：递归到最底层，然后从下往上计算各个节点的高度（不需要单独一个函数计算）。然后再从底向上判断树是否平衡（Bottom-up）。 优点就是每个节点只会访问一次。</li>
+</ul>
+
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.1.cc">在此</a></p>
+
+<h3>4.2 判断图中两个节点的连通性</h3>
+
+<p>可以使用BFS和DFS。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.2.cc">在此</a></p>
+
+<h3>4.3  通过一个有序数组创建二叉搜索树，使得其高度最低（平衡二叉树吧）</h3>
+
+<p>方法很简单，选中间的节点作为根节点，然后使用前半段区间递归生成左子树，后半段区间生成右子树。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.3.cc">在此</a></p>
+
+<h3>4.4 将树的每层节点串起来成D个链表，D是树的高度</h3>
+
+<p>这里显然要用到层次遍历。但是要稍微修改下传统的层次遍历。由于这里最终结果是D个链表，那么就不需要使用队列了。用链表模拟队列。同时维护两个链表。一个链表包含当前这层的节点，另一个链表包含下层节点。然后一层一层往下。将每层节点的链表直接添加到result中。代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.4.cc">在此</a></p>
+
+<h3>4.5 检查一个二叉树是否是二叉搜索树</h3>
+
+<ul>
+<li>解法1：自顶向下，维护一对minVal和maxVal。只有当前节点的值在这个区间，才是二叉搜索树。</li>
+<li>解法2：使用二叉搜索树的特性。它的中序遍历必然是有序的。然后只需要一个变量指出它的前驱节点就好了（通过中序遍历）。当前节点需要大于（或等于）其前驱节点。</li>
+</ul>
+
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.5.cc">在此</a></p>
+
+<h3>4.6 需找二叉搜索树中一个节点的后继</h3>
+
+<p>后继就是：1）如果有右子树，那么右子树最左边的节点就是其后继。2）往父节点走，第一个右父节点（自己体会下右父节点的意思，第一个向右走的父节点）就是其后继。</p>
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.6.cc">在此</a></p>
+
+<h3>4.7 寻找两个节点第一个共同祖先，不使用某数据结构存放额外节点</h3>
+
+<h4>情形一：节点中包含parent指针</h4>
+
+<p>书上描述的太复杂，实际上有个很简单的解法：把parent当做list的next指针。然后需要做的是：1）找到node1的root节点，并将他们连成一个环：root->parent = node1；2）现在问题就变成了node1和node2是否相交，如果相交，找出第一个相交节点。就是进入环的节点。解法就很简单了，list里做过的。完事后记得还原root->parent。</p>
+
+<h4>情形二：节点中不包含parent指针</h4>
+
+<ul>
+<li>解法一：自顶向下。1）写个函数covers判断某树是否包含某节点)； 2）判断左子树是否包含node1，右子树是否包含node2。如果是这样，那么root就是第一个祖先了；3）如果不是，那么遍历包含两个节点的子树。缺点就是重复访问底层节点。</li>
+<li>解法二：自底向上。我想的，跟书上不太一样。用一个元祖(p1, p2)维护包含(node1, node2)的祖先。从最底层开始（初始(null,null))。直到某个节点p1和p2都不再是nullptr。那么就找到第一个公共祖先了。</li>
+</ul>
+
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.7.cc">在此</a></p>
+
+<h3>4.8 两个二叉树：T1有百万节点，T2有数百个节点。判断T2是否是T1的子树（注意，中间那一部分是不能叫子树的）</h3>
+
+<ul>
+<li>解法一：这是根据树的性质来的，如果是子树，T1那么两种遍历（前序+中序，其他也可以）产生的字符串里必然包含T2的遍历结果。这种方法快（O(m + n)）。但是需要大量的空间（O(m + n))。</li>
+<li>解法二：自顶向下。写一个函数判断两棵树是否相同。然后依次判断T1是否和T2相同，T1的子树（左右）是否和T2相同。这种方法慢（最差O(mn)），但需要的空间小（递归产生的空间O(log(m) + log(n)))。</li>
+<li>解法三：有更好的解法么？题目强调了百万，就在想是不是有更好的解法。最开始想的是解法二，以为这是很笨的解法。结果答案里也是这解法&hellip;</li>
+</ul>
+
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.8.cc">在此</a></p>
+
+<h3>4.9 二叉树的节点包含一个数值，设计个算法，打印一条路径使得它的总和等于一个给定值。这条路径不需要从root开始或以leaf结束</h3>
+
+<ul>
+<li>解法一：自顶向下。用数组维护自开始节点以来的路径，只要结果等于sum就打印路径，一直遍历到null。然后开始回溯，直到数组为空，然后设定子树的根节点为起始节点，重复操作。这个解法会重复访问底层节点。</li>
+<li>解法二：自顶向下。优化上面的解法，使得不需要重复遍历节点。使用数组维护自根节点到当前节点的path，然后在path里从后往前累加，只要累加值等于给定的值，就打印这个path。所有节点只需遍历一遍。</li>
+</ul>
+
+
+<p>代码<a href="https://github.com/zhoulike/algorithms/blob/master/cc150/4.9.cc">在此</a></p>
+
+<h1>总结</h1>
+
+<p>树的题目一般有两个解法：自顶向下和自底向上：</p>
+
+<ul>
+<li>自顶向下解法直观，但通常会重复访问底层的节点。</li>
+<li>自底向上需要维护额外的变量，用来纪录底部以来的状态。好处是通常只遍历每个节点一次。</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[LevelDB——Arena分析]]></title>
