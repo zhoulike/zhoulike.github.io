@@ -9,7 +9,7 @@
   <meta name="author" content="Like">
 
   
-  <meta name="description" content="基本纲领 树形结构的特征很明显：子树也是树（废话）&hellip;所以，首先要想到的解法就是递归。然后具体方法又分为自顶向下（Top-down）和自底向上（Bottom-up）。 图的算法就那么多吧&hellip;这章就一个图的题。 4.1 实现一个函数判断一个二叉树是不是平衡的。 解法1： &hellip;">
+  <meta name="description" content="0. 前提条件 自己是学生，具有edu.cn或edu的邮箱。如果没有的话，据说使用学生证也可。 1. DigitalOcean上VPS的作用 DigitalOcean就是卖虚拟机的，包括全球多个机房（如旧金山、纽约、新加坡等）。用户购买虚拟机可以干很多事情，包括单不限于： &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +66,84 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/15/mian-fei-shi-yong-digitaloceanshang-de-xu-ni-ji/">免费使用DigitalOcean上的虚拟机</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-15T15:32:49+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>0. 前提条件</h3>
+
+<p>自己是学生，具有edu.cn或edu的邮箱。如果没有的话，据说使用学生证也可。</p>
+
+<h3>1. DigitalOcean上VPS的作用</h3>
+
+<p>DigitalOcean就是卖虚拟机的，包括全球多个机房（如旧金山、纽约、新加坡等）。用户购买虚拟机可以干很多事情，包括单不限于：</p>
+
+<ul>
+<li>安装shadowsocks穿越防火长城GFW。从此，无障碍访问互联网；</li>
+<li>部署个人博客/网站；</li>
+</ul>
+
+
+<h3>2. 免费/低价使用的步骤</h3>
+
+<h4>1) 获取Github Student Developer Pack</h4>
+
+<p>Github为学生提供了很多福利，包括100刀的DigitalOcean券，免费注册.me域名（一年）等等。</p>
+
+<p>首先，访问<a href="https://education.github.com/pack">https://education.github.com/pack</a>，获取自己的pack（使用edu/edu.cn的邮箱）。</p>
+
+<p>然后，在DigitalOcean那一项获得100刀的促销码。</p>
+
+<h4>2) 注册DigitalOcean账号</h4>
+
+<p>访问<a href="https://www.digitalocean.com/?refcode=65b0f33ddec8">https://www.digitalocean.com/?refcode=65b0f33ddec8</a>注册DigitalOcean账号。前面这个账号带了我的推荐小尾巴，使用我的推荐链接注册你可以额外获得10美刀。当然也可以直接搜索官网，然后注册。但是，不会有这10美刀。</p>
+
+<p>注册完，在Billing页面输入刚刚获取的100刀促销码。此时，账号里已经有110刀（推荐链接送10刀 + 100刀促销码），但账号并没有激活。</p>
+
+<h4>3) 激活DigitalOcean账号</h4>
+
+<p>一共有两种方式，使用双币信用卡免费激活或者使用PayPal付5美元激活。如果使用信用卡，那么就可以免费激活账号（认证信用卡时会临时扣钱，但会退还）。后期只要账户里有余额，使用没超，就不会扣钱。我选择了使用PayPal付5美元注册。</p>
+
+<p>访问<a href="https://www.paypal.com/c2/webapps/mpp/get-started">https://www.paypal.com/c2/webapps/mpp/get-started</a>注册PayPal账户，账户类型选“个人”。注册完以后就可以使用银联卡进行美元支付，跟平时使用支付宝一样一样的。但是需要注意的是不能使用中国银行的长城借记卡，PayPal会识别为Discover的一个卡。这是因为长城借记卡的卡号没有按照银联标准走。5美元约合人民币30元多一点点。</p>
+
+<h4>4) 购买虚拟机(Droplets)</h4>
+
+<p>可以在多个机房中选（我选了旧金山机房），也可以选择多个实例。如果选择最便宜的5美刀的实例，那么账户里100多刀就可以用20多个月。</p>
+
+<p>我购买虚拟机后，目前只是安装了shadowsocks。看优土鳖，vimeo上的视频还是很流畅的，基本无卡顿（教育网）。从此，自由上网。</p>
+
+<p>使用免费的Goagent自由上网存在一些安全风险，见：<a href="http://www.williamlong.info/archives/3882.html">http://www.williamlong.info/archives/3882.html</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -986,13 +1064,17 @@
     <li class='category'><a href='/blog/categories/algorithms/'>Algorithms (3)</a></li>
 <li class='category'><a href='/blog/categories/key-value/'>Key-Value (2)</a></li>
 <li class='category'><a href='/blog/categories/python/'>Python (1)</a></li>
-<li class='category'><a href='/blog/categories/others/'>others (1)</a></li>
+<li class='category'><a href='/blog/categories/others/'>others (2)</a></li>
 
   </ul>
 </section>
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/15/mian-fei-shi-yong-digitaloceanshang-de-xu-ni-ji/">免费使用DigitalOcean上的虚拟机</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/06/11/cc150-4/">Cc150总结-4. Trees and Graphs</a>
@@ -1008,10 +1090,6 @@
     
       <li class="post">
         <a href="/blog/2014/03/14/cc150-1/">Cc150总结-1. Arrays and Strings</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/01/20/leveldban-zhuang-ji-shi-wan/">LevelDB安装及试玩</a>
       </li>
     
   </ul>
