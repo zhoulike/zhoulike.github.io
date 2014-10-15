@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Others | Like World]]></title>
   <link href="http://zhoulike.github.io/blog/categories/others/atom.xml" rel="self"/>
   <link href="http://zhoulike.github.io/"/>
-  <updated>2014-10-15T15:59:39+08:00</updated>
+  <updated>2014-10-15T16:44:33+08:00</updated>
   <id>http://zhoulike.github.io/</id>
   <author>
     <name><![CDATA[Like]]></name>
@@ -24,7 +24,7 @@
 
 <h3>1. DigitalOcean上VPS的作用</h3>
 
-<p>DigitalOcean就是卖虚拟机的，包括全球多个机房（如旧金山、纽约、新加坡等）。用户购买虚拟机可以干很多事情，包括单不限于：</p>
+<p>DigitalOcean就是卖虚拟机的，包括全球多个机房（如旧金山、纽约、新加坡等）。用户购买虚拟机可以干很多事情，包括但不限于：</p>
 
 <ul>
 <li>安装shadowsocks穿越防火长城GFW。从此，无障碍访问互联网；</li>
@@ -44,7 +44,7 @@
 
 <h4>2) 注册DigitalOcean账号</h4>
 
-<p>访问<a href="https://www.digitalocean.com/?refcode=65b0f33ddec8">https://www.digitalocean.com/?refcode=65b0f33ddec8</a>注册DigitalOcean账号。前面这个账号带了我的推荐小尾巴，使用我的推荐链接注册你可以额外获得10美刀。当然也可以直接搜索官网，然后注册。但是，不会有这10美刀。</p>
+<p>访问<a href="https://www.digitalocean.com/?refcode=65b0f33ddec8">https://www.digitalocean.com/?refcode=65b0f33ddec8</a>注册DigitalOcean账号。前面这个注册链接带了我的推荐小尾巴，使用我的推荐链接注册你可以额外获得10美刀。当然也可以直接搜索官网，然后注册。但是，不会有这10美刀。</p>
 
 <p>注册完，在Billing页面输入刚刚获取的100刀促销码。此时，账号里已经有110刀（推荐链接送10刀 + 100刀促销码），但账号并没有激活。</p>
 
